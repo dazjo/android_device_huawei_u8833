@@ -19,6 +19,10 @@ $(call inherit-product, device/huawei/msm7x27a-common/msm7x27a.mk)
 
 # Files
 PRODUCT_COPY_FILES += \
+    device/huawei/u8833/rootdir/fstab.huawei:root/fstab.huawei \
+    device/huawei/u8833/rootdir/init.device.rc:root/init.device.rc
+
+PRODUCT_COPY_FILES += \
     device/huawei/u8833/configs/AudioFilter.csv:system/etc/AudioFilter.csv \
     device/huawei/u8833/configs/thermald.conf:system/etc/thermald.conf
 
