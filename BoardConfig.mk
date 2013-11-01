@@ -50,6 +50,7 @@ BOARD_SYSTEMIMAGE_PARTITION_SIZE := 1073741824 # 0x40000000
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 1207943168 # 0x47FFC000
 
 # Recovery
+BOARD_CUSTOM_GRAPHICS := ../../../device/huawei/u8833/recovery/graphics.c
 TARGET_RECOVERY_FSTAB := device/huawei/u8833/rootdir/fstab.huawei
 
 # Wi-Fi
