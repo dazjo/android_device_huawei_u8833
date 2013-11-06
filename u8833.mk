@@ -42,9 +42,9 @@ PRODUCT_COPY_FILES += \
 
 # Properties
 PRODUCT_PROPERTY_OVERRIDES += \
-    ro.confg.hw_appfsversion=U8833V4_3_SYSIMG \
-    ro.confg.hw_appsbootversion=U8833V4_3_APPSBOOT \
-    ro.confg.hw_appversion=U8833V4_3_KERNEL
+    ro.confg.hw_appfsversion=U8833V4_4_SYSIMG \
+    ro.confg.hw_appsbootversion=U8833V4_4_APPSBOOT \
+    ro.confg.hw_appversion=U8833V4_4_KERNEL
 
 PRODUCT_PROPERTY_OVERRIDES += \
     gsm.version.baseband=2030 \
