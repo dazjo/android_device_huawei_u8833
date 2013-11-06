@@ -95,7 +95,7 @@ public class HuaweiQualcommRIL extends QualcommSharedRIL implements CommandsInte
     }
 
     @Override
-    protected void
+    protected RILRequest
     processSolicited (Parcel p) {
         int serial, error;
         boolean found = false;
@@ -110,7 +110,7 @@ public class HuaweiQualcommRIL extends QualcommSharedRIL implements CommandsInte
         if (rr == null) {
             Log.w(LOG_TAG, "Unexpected solicited response! sn: "
                             + serial + " error: " + error);
-            return;
+            return null;
         }
 
         Object ret = null;
@@ -137,7 +137,7 @@ public class HuaweiQualcommRIL extends QualcommSharedRIL implements CommandsInte
             case RIL_REQUEST_ENTER_SIM_PUK2: ret =  responseInts(p); break;
             case RIL_REQUEST_CHANGE_SIM_PIN: ret =  responseInts(p); break;
             case RIL_REQUEST_CHANGE_SIM_PIN2: ret =  responseInts(p); break;
-            case RIL_REQUEST_ENTER_DEPERSONALIZATION_CODE: ret =  responseInts(p); break;
+            case RIL_REQUEST_ENTER_NETWORK_DEPERSONALIZATION: ret =  responseInts(p); break;
             case RIL_REQUEST_GET_CURRENT_CALLS: ret =  responseCallList(p); break;
             case RIL_REQUEST_DIAL: ret =  responseVoid(p); break;
             case RIL_REQUEST_GET_IMSI: ret =  responseString(p); break;
@@ -262,15 +262,13 @@ public class HuaweiQualcommRIL extends QualcommSharedRIL implements CommandsInte
                     AsyncResult.forMessage(rr.mResult, null, tr);
                     rr.mResult.sendToTarget();
                 }
-                rr.release();
-                return;
+                return rr;
             }
         }
 
         if (error != 0) {
             rr.onError(error, ret);
-            rr.release();
-            return;
+            return rr;
         }
 
         if (RILJ_LOGD) riljLog(rr.serialString() + "< " + requestToString(rr.mRequest)
@@ -281,7 +279,7 @@ public class HuaweiQualcommRIL extends QualcommSharedRIL implements CommandsInte
             rr.mResult.sendToTarget();
         }
 
-        rr.release();
+        return rr;
     }
 
     @Override
