@@ -1,7 +1,7 @@
-From 61de5e92296dc6f5bd8cd910c5d367b822d0c4e1 Mon Sep 17 00:00:00 2001
+From a584c191461eaafa01c57e9b0d6c0bba9b10e4f9 Mon Sep 17 00:00:00 2001
 From: Daz Jones <yuki@thebronasium.com>
 Date: Thu, 10 Oct 2013 22:01:18 +0100
-Subject: [PATCH] Update Huawei SoftapControllerATH for 4.3
+Subject: [PATCH] Update Huawei SoftapControllerATH for 4.4 (and 4.3)
 
 Original Huaweifying by Kra1o5
 'Revival' of SoftapControllerATH by grigorig
@@ -11,15 +11,15 @@ Change-Id: I62983bd2923398a6511296341ea34b64dac05998
  Android.mk              |   8 +
  CommandListener.cpp     |   9 +
  SoftapController.h      |   8 +
- SoftapControllerATH.cpp | 817 ++++++++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 842 insertions(+)
+ SoftapControllerATH.cpp | 816 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 841 insertions(+)
  create mode 100644 SoftapControllerATH.cpp
 
 diff --git a/Android.mk b/Android.mk
-index 5168b01..16a6c03 100644
+index b3990e1..5d7590a 100644
 --- a/Android.mk
 +++ b/Android.mk
-@@ -40,11 +40,19 @@ LOCAL_SHARED_LIBRARIES := libstlport libsysutils liblog libcutils libnetutils \
+@@ -41,11 +41,19 @@ LOCAL_SHARED_LIBRARIES := libstlport libsysutils liblog libcutils libnetutils \
                            libcrypto libhardware_legacy libmdnssd libdl \
                            liblogwrap
  
@@ -40,10 +40,10 @@ index 5168b01..16a6c03 100644
  ifneq ($(BOARD_HOSTAPD_DRIVER),)
    LOCAL_CFLAGS += -DHAVE_HOSTAPD
 diff --git a/CommandListener.cpp b/CommandListener.cpp
-index 4d91bc4..69f1e81 100644
+index e0841d3..80384d7 100644
 --- a/CommandListener.cpp
 +++ b/CommandListener.cpp
-@@ -849,8 +849,17 @@ int CommandListener::SoftapCmd::runCommand(SocketClient *cli,
+@@ -1021,8 +1021,17 @@ int CommandListener::SoftapCmd::runCommand(SocketClient *cli,
          return 0;
      }
  
@@ -62,10 +62,10 @@ index 4d91bc4..69f1e81 100644
          rc = sSoftapCtrl->stopSoftap();
      } else if (!strcmp(argv[1], "fwreload")) {
 diff --git a/SoftapController.h b/SoftapController.h
-index 38ff8ff..babd148 100644
+index 7063067..b520fca 100644
 --- a/SoftapController.h
 +++ b/SoftapController.h
-@@ -31,12 +31,20 @@ public:
+@@ -32,12 +32,20 @@ public:
      SoftapController();
      virtual ~SoftapController();
  
@@ -88,10 +88,10 @@ index 38ff8ff..babd148 100644
  };
 diff --git a/SoftapControllerATH.cpp b/SoftapControllerATH.cpp
 new file mode 100644
-index 0000000..2b3d148
+index 0000000..3d9316b
 --- /dev/null
 +++ b/SoftapControllerATH.cpp
-@@ -0,0 +1,817 @@
+@@ -0,0 +1,816 @@
 +/*
 + * Copyright (C) 2008 The Android Open Source Project
 + *
@@ -349,7 +349,7 @@ index 0000000..2b3d148
 +     */
 +    pi = __system_property_find(HOSTAPD_PROP_NAME);
 +    if (pi != NULL) {
-+        serial = pi->serial;
++        serial = __system_property_serial(pi);
 +    }
 +#endif
 +    property_set("ctl.start", HOSTAPD_NAME);
@@ -364,7 +364,7 @@ index 0000000..2b3d148
 +            __system_property_read(pi, NULL, supp_status);
 +            if (strcmp(supp_status, "running") == 0) {
 +                return 0;
-+            } else if (pi->serial != serial &&
++            } else if (__system_property_serial(pi) != serial &&
 +                    strcmp(supp_status, "stopped") == 0) {
 +                return -1;
 +            }
@@ -773,13 +773,12 @@ index 0000000..2b3d148
 +
 +/*
 + * Arguments:
-+ *      argv[2] - wlan interface
-+ *      argv[3] - SSID
-+ *	argv[4] - Security
-+ *	argv[5] - Key
-+ *	argv[6] - Channel
-+ *	argv[7] - Preamble
-+ *	argv[8] - Max SCB
++ *	argv[2] - wlan interface
++ *	argv[3] - SSID
++ *	argv[4] - Broadcast/Hidden
++ *	argv[5] - Channel
++ *	argv[6] - Security
++ *	argv[7] - Key
 + */
 +int SoftapController::setSoftap(int argc, char *argv[]) {
 +    unsigned char psk[SHA256_DIGEST_LENGTH];
@@ -834,7 +833,7 @@ index 0000000..2b3d148
 +    len = snprintf(buf, sizeof(buf), "dtim_period=%d\n",WIFI_DEFAULT_DTIM);
 +    write(fd, buf, len);
 +    if (argc > 4) {
-+        if (strncmp(argv[4], "wpa2-psk", 8) == 0) {
++        if (strncmp(argv[6], "wpa2-psk", 8) == 0) {
 +            len = snprintf(buf, sizeof(buf), "wpa=2\n");
 +            write(fd, buf, len);
 +            len = snprintf(buf, sizeof(buf), "wpa_key_mgmt=WPA-PSK\n");
@@ -842,7 +841,7 @@ index 0000000..2b3d148
 +            len = snprintf(buf, sizeof(buf), "wpa_pairwise=CCMP\n");
 +            write(fd, buf, len);
 +            if (argc > 5) {
-+                len = snprintf(buf, sizeof(buf), "wpa_passphrase=%s\n",argv[5]);
++                len = snprintf(buf, sizeof(buf), "wpa_passphrase=%s\n",argv[7]);
 +                write(fd, buf, len);
 +            } else {
 +                len = snprintf(buf, sizeof(buf), "wpa_passphrase=12345678\n");
@@ -851,7 +850,7 @@ index 0000000..2b3d148
 +        }
 +    }
 +    if (argc > 6) {
-+        len = snprintf(buf, sizeof(buf), "channel=%s\n",argv[6]);
++        len = snprintf(buf, sizeof(buf), "channel=%s\n",argv[5]);
 +        write(fd, buf, len);
 +    } else {
 +        len = snprintf(buf, sizeof(buf), "channel=%d\n",WIFI_DEFAULT_CHANNEL);
