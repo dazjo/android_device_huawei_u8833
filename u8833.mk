@@ -22,7 +22,8 @@ DEVICE_PACKAGE_OVERLAYS += device/huawei/u8833/overlay
 # Files
 PRODUCT_COPY_FILES += \
     device/huawei/u8833/rootdir/fstab.huawei:root/fstab.huawei \
-    device/huawei/u8833/rootdir/init.device.rc:root/init.device.rc
+    device/huawei/u8833/rootdir/init.device.rc:root/init.device.rc \
+    device/huawei/u8833/rootdir/1191601.img:root/tp/1191601.img
 
 PRODUCT_COPY_FILES += \
     device/huawei/u8833/configs/AudioFilter.csv:system/etc/AudioFilter.csv \
