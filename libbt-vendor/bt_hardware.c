@@ -111,7 +111,7 @@ int bt_hardware_download_firmware(void)
 	char mac_argument[256];
 	snprintf(mac_argument, 256, "/system/bin/hci_qcomm_init"
 		" --force-hw-sleep --board-address "
-		"%02X:%02X:%02X:%02X:%02X:%02X"
+		"%.2X:%.2X:%.2X:%.2X:%.2X:%.2X"
 		" --power-class %d",
 		bt_vendor_local_bdaddr[0], bt_vendor_local_bdaddr[1],
 		bt_vendor_local_bdaddr[2], bt_vendor_local_bdaddr[3],
