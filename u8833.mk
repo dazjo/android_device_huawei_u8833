@@ -19,6 +19,12 @@ $(call inherit-product, device/huawei/msm7x27a-common/msm7x27a.mk)
 
 DEVICE_PACKAGE_OVERLAYS += device/huawei/u8833/overlay
 
+# Packages
+PRODUCT_PACKAGES += \
+    FM2 \
+    libqcomfm_jni \
+    qcom.fmradio
+
 # Files
 PRODUCT_COPY_FILES += \
     device/huawei/u8833/rootdir/fstab.huawei:root/fstab.huawei \
@@ -27,6 +33,7 @@ PRODUCT_COPY_FILES += \
 
 PRODUCT_COPY_FILES += \
     device/huawei/u8833/configs/AudioFilter.csv:system/etc/AudioFilter.csv \
+    device/huawei/u8833/configs/init.qcom.fm.sh:system/etc/init.qcom.fm.sh \
     device/huawei/u8833/configs/thermald.conf:system/etc/thermald.conf
 
 PRODUCT_COPY_FILES += \
@@ -46,6 +53,11 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.confg.hw_appfsversion=U8833V4_4_SYSIMG \
     ro.confg.hw_appsbootversion=U8833V4_4_APPSBOOT \
     ro.confg.hw_appversion=U8833V4_4_KERNEL
+
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.fm.analogpath.supported=false \
+    ro.fm.transmitter=false \
+    ro.fm.mulinst.recording.support=false
 
 PRODUCT_PROPERTY_OVERRIDES += \
     gsm.version.baseband=2030 \
