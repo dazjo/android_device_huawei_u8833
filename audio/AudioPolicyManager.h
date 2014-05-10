@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 The Android Open Source Project
- * Copyright (C) 2012, Code Aurora Forum. All rights reserved.
+ * Copyright (C) 2012, The Linux Foundation. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,6 +57,8 @@ public:
                                                            AudioSystem::device_connection_state state,
                                                            const char *device_address);
 
+        virtual void setPhoneState(int state);
+		
         virtual audio_devices_t getDeviceForVolume(audio_devices_t device);
 
         virtual uint32_t  checkDeviceMuteStrategies(AudioOutputDescriptor *outputDesc,
@@ -65,8 +67,8 @@ public:
         virtual void setForceUse(AudioSystem::force_use usage, AudioSystem::forced_config config);
 protected:
         virtual audio_devices_t getDeviceForStrategy(routing_strategy strategy, bool fromCache = true);
-
         fm_modes fmMode;
+        bool pendingForceNone;
 
 #ifdef WITH_A2DP
         // true is current platform supports suplication of notifications and ringtones over A2DP output
@@ -98,6 +100,7 @@ protected:
                                     audio_output_flags_t flags);
         // check that volume change is permitted, compute and send new volume to audio hardware
         status_t checkAndSetVolume(int stream, int index, audio_io_handle_t output, audio_devices_t device, int delayMs = 0, bool force = false);
+        status_t stopInput(audio_io_handle_t input);
         // select input device corresponding to requested audio source
         virtual audio_devices_t getDeviceForInputSource(int inputSource);
 
