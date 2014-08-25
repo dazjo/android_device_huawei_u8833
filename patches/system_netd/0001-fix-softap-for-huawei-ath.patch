@@ -1,4 +1,4 @@
-From a584c191461eaafa01c57e9b0d6c0bba9b10e4f9 Mon Sep 17 00:00:00 2001
+From 6abc8c4ee633122137a461e5cf5bc0d54bd18f1c Mon Sep 17 00:00:00 2001
 From: Daz Jones <yuki@thebronasium.com>
 Date: Thu, 10 Oct 2013 22:01:18 +0100
 Subject: [PATCH] Update Huawei SoftapControllerATH for 4.4 (and 4.3)
@@ -8,18 +8,26 @@ Original Huaweifying by Kra1o5
 
 Change-Id: I62983bd2923398a6511296341ea34b64dac05998
 ---
- Android.mk              |   8 +
+ Android.mk              |  11 +-
  CommandListener.cpp     |   9 +
  SoftapController.h      |   8 +
  SoftapControllerATH.cpp | 816 ++++++++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 841 insertions(+)
+ 4 files changed, 843 insertions(+), 1 deletion(-)
  create mode 100644 SoftapControllerATH.cpp
 
 diff --git a/Android.mk b/Android.mk
-index b3990e1..5d7590a 100644
+index 9c383d0..e0dadc6 100644
 --- a/Android.mk
 +++ b/Android.mk
-@@ -41,11 +41,19 @@ LOCAL_SHARED_LIBRARIES := libstlport libsysutils liblog libcutils libnetutils \
+@@ -19,7 +19,6 @@ LOCAL_SRC_FILES:=                                      \
+                   PppController.cpp                    \
+                   ResolverController.cpp               \
+                   SecondaryTableController.cpp         \
+-                  SoftapController.cpp                 \
+                   TetherController.cpp                 \
+                   oem_iptables_hook.cpp                \
+                   UidMarkMap.cpp                       \
+@@ -46,6 +45,16 @@ LOCAL_SHARED_LIBRARIES := libstlport libsysutils liblog libcutils libnetutils \
                            libcrypto libhardware_legacy libmdnssd libdl \
                            liblogwrap
  
@@ -30,20 +38,17 @@ index b3990e1..5d7590a 100644
 +  LOCAL_SRC_FILES += SoftapControllerATH.cpp
 +  LOCAL_SHARED_LIBRARIES := $(LOCAL_SHARED_LIBRARIES) libwpa_client
 +else
- ifdef USES_TI_MAC80211
-   LOCAL_SRC_FILES += SoftapControllerTI.cpp
- else
-   LOCAL_SRC_FILES += SoftapController.cpp
- endif
++  LOCAL_SRC_FILES += SoftapController.cpp
 +endif
- 
++
  ifneq ($(BOARD_HOSTAPD_DRIVER),)
    LOCAL_CFLAGS += -DHAVE_HOSTAPD
+   ifneq ($(BOARD_HOSTAPD_DRIVER_NAME),)
 diff --git a/CommandListener.cpp b/CommandListener.cpp
-index e0841d3..80384d7 100644
+index 52024de..9c1579e 100644
 --- a/CommandListener.cpp
 +++ b/CommandListener.cpp
-@@ -1021,8 +1021,17 @@ int CommandListener::SoftapCmd::runCommand(SocketClient *cli,
+@@ -1062,8 +1062,17 @@ int CommandListener::SoftapCmd::runCommand(SocketClient *cli,
          return 0;
      }
  
@@ -909,5 +914,5 @@ index 0000000..3d9316b
 +    return ResponseCode::SoftapStatusResult;
 +}
 -- 
-1.8.1.2
+1.9.1
 
