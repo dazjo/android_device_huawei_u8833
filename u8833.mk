@@ -22,6 +22,7 @@ DEVICE_PACKAGE_OVERLAYS += device/huawei/u8833/overlay
 # Packages
 PRODUCT_PACKAGES += \
     FM2 \
+    FMRecord \
     libqcomfm_jni \
     qcom.fmradio
 
